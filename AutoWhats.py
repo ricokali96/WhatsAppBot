@@ -6,14 +6,11 @@ import time
 import urllib
 from datetime import date, datetime
 import random
-import getpass
 
-usern = getpass.getuser() #pega o nome do usuario
-profiledir = r"--user-data-dir=C:\Users\{}\AppData\Local\Google\Chrome\User Data\Default".format(usern)
 contatos_df = pd.read_excel("TesteReal1.xlsx")
 options = webdriver.ChromeOptions()
 #options.add_argument(r"--user-data-dir=C:\Users\Usuário\AppData\Local\Google\Chrome\User Data\Default")
-options.add_argument(profiledir) #usa o profile do usuario do computador
+options.add_argument(r"--user-data-dir=C:\Users\Usuário\AppData\Local\Google\Chrome\User Data\Default")
 #while len(navegador.find_element_by_id("side")) < 1:
     #time.sleep(5)
 navegador = webdriver.Chrome(executable_path=r'./chromedriver', chrome_options=options)
@@ -33,17 +30,11 @@ for i, mensagem in enumerate(contatos_df['Mensagem']):
     textcod = urllib.parse.quote(mensagem) #transforma a mensagem em cod url, pode customisar com variaveis
     link = f"https://web.whatsapp.com/send?phone={numero}&text={textcod}"
     navegador.get(link)
-    time.sleep(random.randint(30,35))
+    time.sleep(random.randint(20,25))
     #while len(navegador.find_element_by_id("side")) < 1:
     #time.sleep(1)
     try: #tenta apertar enter, se nao der avisa que deu errado
         navegador.find_element_by_xpath('//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[2]').send_keys(Keys.ENTER) # copiamos o XPATH da caixa de texto e vamos dar enter
     except:
         print(f"Numero errado de {pessoa}, ver se {numero} está correto")
-    
     time.sleep(random.randint(6,10)) #tempo para envio da mensagem
-
-    #aux = len(navegador.find_elements_by_xpath('//*[@id="main"]/div[3]/div/div[2]/div[3]/div[21]/div/div/div/div[2]/div/div/span'))
-    #print(aux)
-
-    
