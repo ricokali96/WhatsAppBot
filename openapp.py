@@ -132,4 +132,26 @@ while True:
         print(".")
         print(".")
         """ 
-os.start("/Users/rico/Applications/Microsoft\ Excel")
+
+import os
+import sys, subprocess
+#os.system("program_name") # To open any program by their name recognized by windows
+
+# OR
+
+#os.startfile("TesteReal1.xlsx") # Open any program, text or office document
+print(sys.platform)
+"""
+if sys.platform == 'linux2':
+    subprocess.call(["xdg-open", file])
+else:
+    os.startfile(file)
+
+"""
+file = "TesteReal1.xlsx"
+if sys.platform == 'win32':
+    os.startfile(file)
+else:
+    #subprocess.call(["xdg-open", file])
+    os.system('open TesteReal1.xlsx')
+    

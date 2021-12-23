@@ -12,10 +12,10 @@ import getpass
 import random
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import time
-import urllib
-import random
-
+import time, urllib, random, os
+    ################
+    #Funciona apenas para Windows
+    ################
 #Pega a data desejada
 day_before = (date.today()-timedelta(days=2)).strftime("%d/%m/%Y")
 day_beforestg= str(day_before)
@@ -65,7 +65,7 @@ try:
     display(new_df)
 
     ##Rotina para exportar o dataframe com apenas o dia definido, para excel em linhas e colunas definidas
-    sheetfile = openpyxl.load_workbook('TesteReal.xlsx', read_only= False)
+    sheetfile = openpyxl.load_workbook('TesteReal1.xlsx', read_only= False)
     sheetname = sheetfile['Planilha1'] #Nome da pagina da planilha
     for i, condutor in enumerate(new_df['Condutor']): #Loop para colocar na planilha as colunas definidas.
         sheetname.cell(row=(i+2),column=1).value = new_df.loc[i,"Data"]
@@ -73,12 +73,18 @@ try:
         sheetname.cell(row=(i+2),column=3).value = new_df.loc[i,"Marca"]
         sheetname.cell(row=(i+2),column=4).value = new_df.loc[i,"Modelo"]
         sheetname.cell(row=(i+2),column=5).value = new_df.loc[i,"Telefone"]
-    sheetfile.save('TesteReal.xlsx')
-    time.sleep(5)
+    sheetfile.save('TesteReal1.xlsx')
+
+    ##Abrir o excel para que as formulas das colunas sejam lidas ##So funciona no windows 
+    ##//Para MAC e Linux ->>>> os.system('open TesteReal1.xlsx')
+    #subprocess.call('C://Program Files//Microsoft Office//root//Office16//EXCEL.EXE')
+    os.startfile('TesteReal1.xlsx')
+    time.sleep(10)
+
     ##rotina para mandar as mensagens com chrome
     usern = getpass.getuser()
     profiledir = r"--user-data-dir=C:\Users\{}\AppData\Local\Google\Chrome\User Data\Default".format(usern)
-    contatos_df = pd.read_excel("TesteReal.xlsx")
+    contatos_df = pd.read_excel("TesteReal1.xlsx")
     display(contatos_df)
     options = webdriver.ChromeOptions()
     #options.add_argument(r"--user-data-dir=C:\Users\Usuário\AppData\Local\Google\Chrome\User Data\Default")
@@ -92,7 +98,7 @@ try:
     for i, mensagem in enumerate(contatos_df['Mensagem']):
         #dia = contatos_df.loc[i,"Data"]
         #if dia == date_time:
-        #pessoa = contatos_df.loc[i,"Nome"]
+        pessoa = contatos_df.loc[i,"Nome"]
         numero = contatos_df.loc[i,"Numero"]
         #print(numero,"",pessoa,"",dia)
         textcod = urllib.parse.quote(mensagem) #transforma a mensagem em cod url, pode customisar com variaveis
