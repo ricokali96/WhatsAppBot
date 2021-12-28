@@ -3,15 +3,12 @@ from time import sleep, time
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from numpy import dtype, string_
+from numpy import string_
 import pandas as pd
 from IPython.display import display
-import openpyxl
-import getpass
-import random
+import getpass, random, time, urllib
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import time, urllib, random
 
 #cria o scopo - o que vai ser feito
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
@@ -42,8 +39,7 @@ try:
     values = result.get('values', []) #organiza os valores entre []
     colums_names = ['Data','Nome','Nome Completo','NumeroRaw','Numero','Marca','Modelo','Mensagem']#define nome das colunas de df1 e new_df
     contatos_df = pd.DataFrame(values, columns= colums_names) #cria dataframe com dados da api ja prontos para mandar
-    display(contatos_df)
-
+    
     ## Rotina para mandar mensagens pelo chromedriver 
     usern = getpass.getuser()
     profiledir = r"--user-data-dir=C:\Users\{}\AppData\Local\Google\Chrome\User Data\Default".format(usern)
@@ -54,25 +50,40 @@ try:
     navegador = webdriver.Chrome(executable_path=r'./chromedriver', chrome_options=options)
     navegador.get("https://web.whatsapp.com/")
     time.sleep(random.randint(35,40)) #tempo para escanear QR code
-
+    x = 0
     for i, mensagem in enumerate(contatos_df['Mensagem']):
         #dia = contatos_df.loc[i,"Data"]
         #if dia == date_time:
         pessoa = contatos_df.loc[i,"Nome"]
         numero = contatos_df.loc[i,"Numero"]
         #print(numero,"",pessoa,"",dia)
-        textcod = urllib.parse.quote(mensagem) #transforma a mensagem em cod url, pode customisar com variaveis
-        link = f"https://web.whatsapp.com/send?phone={numero}&text={textcod}"
-        navegador.get(link)
-        time.sleep(random.randint(20,25))
-        #while len(navegador.find_element_by_id("side")) < 1:
-        #time.sleep(1)
-        try: #tenta apertar enter, se nao der avisa que deu errado
-            navegador.find_element_by_xpath('//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[2]').send_keys(Keys.ENTER) # copiamos o XPATH da caixa de texto e vamos dar enter
-        except:
-            print(f"Numero errado de {pessoa}, ver se {numero} está correto")
-        time.sleep(random.randint(6,10)) #tempo para envio da mensagem
-    
+        if x == 0:
+            textcod = urllib.parse.quote(mensagem) #transforma a mensagem em cod url, pode customisar com variaveis
+            link = f"https://web.whatsapp.com/send?phone={numero}&text={textcod}"
+            navegador.get(link)
+            time.sleep(random.randint(20,25))
+            #while len(navegador.find_element_by_id("side")) < 1:
+            #time.sleep(1)
+            x = 1
+            try: #tenta apertar enter, se nao der avisa que deu errado
+                navegador.find_element_by_xpath('//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[2]').send_keys(Keys.ENTER) # copiamos o XPATH da caixa de texto e vamos dar enter
+            except:
+                print(f"Numero errado de {pessoa}, ver se {numero} está correto")
+            time.sleep(random.randint(6,10)) #tempo para envio da mensagem
+        else:
+            if contatos_df.loc[i,"Nome Completo"] != contatos_df.loc[i-1,"Nome Completo"]:
+                textcod = urllib.parse.quote(mensagem) #transforma a mensagem em cod url, pode customisar com variaveis
+                link = f"https://web.whatsapp.com/send?phone={numero}&text={textcod}"
+                navegador.get(link)
+                time.sleep(random.randint(20,25))
+                #while len(navegador.find_element_by_id("side")) < 1:
+                #time.sleep(1)
+            try: #tenta apertar enter, se nao der avisa que deu errado
+                navegador.find_element_by_xpath('//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[2]').send_keys(Keys.ENTER) # copiamos o XPATH da caixa de texto e vamos dar enter
+            except:
+                print(f"Numero errado de {pessoa}, ver se {numero} está correto")
+            time.sleep(random.randint(6,10)) #tempo para envio da mensagem
+
 
 except HttpError as err:
     print(err)
