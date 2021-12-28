@@ -9,7 +9,9 @@ from IPython.display import display
 import getpass, random, time, urllib
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-
+####################
+# Only for Windows #
+####################
 #cria o scopo - o que vai ser feito
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
@@ -40,7 +42,7 @@ try:
     colums_names = ['Data','Nome','Nome Completo','NumeroRaw','Numero','Marca','Modelo','Mensagem']#define nome das colunas de df1 e new_df
     contatos_df = pd.DataFrame(values, columns= colums_names) #cria dataframe com dados da api ja prontos para mandar
     
-    ## Rotina para mandar mensagens pelo chromedriver 
+    ## Rotina para mandar mensagens pelo chromedriver Eng: sends messages through cromedriver using df
     usern = getpass.getuser()
     profiledir = r"--user-data-dir=C:\Users\{}\AppData\Local\Google\Chrome\User Data\Default".format(usern)
     options = webdriver.ChromeOptions()
