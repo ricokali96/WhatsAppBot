@@ -6,7 +6,7 @@
 WINDOWS ONLY
 ###
 - Chrome driver needs to be in same chrome browser version
-- Uses keys.json for credencials
+- Create your keys.json for credencials
 
 """"
 
